@@ -126,16 +126,17 @@ func (c *ConsumerCChain) ProcessNextMessage() error {
 				atomic.AddInt64(&c.queueCnt, 1)
 				c.txChannel <- &TransactionCWorkPacket{msg: msg, row: row, errs: errs}
 			}
-			for {
+
+			for atomic.LoadInt64(&c.queueCnt) > 0 {
 				switch {
 				case errs.GetValue() != nil:
 					return errs.GetValue().(error)
-				case atomic.LoadInt64(&c.queueCnt) > 0:
-					time.Sleep(time.Millisecond)
 				default:
-					break
+					time.Sleep(time.Millisecond)
 				}
 			}
+
+			return nil
 		}
 
 		updateStatus := func(txPoll *services.TxPool) error {
