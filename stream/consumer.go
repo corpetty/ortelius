@@ -6,7 +6,10 @@ package stream
 import (
 	"context"
 	"fmt"
+	"sync/atomic"
 	"time"
+
+	avlancheGoUtils "github.com/ava-labs/avalanchego/utils"
 
 	"github.com/ava-labs/ortelius/services/db"
 
@@ -26,8 +29,13 @@ const (
 	ConsumerEventTypeDefault = EventTypeDecisions
 	ConsumerMaxBytesDefault  = 10e8
 
-	pollLimit = 500
+	pollLimit = 5000
 	pollSleep = 250 * time.Millisecond
+
+	defaultTxChannelSize = 1024
+
+	// DefaultConsumeProcessWriteTimeout consume context
+	DefaultConsumeProcessWriteTimeout = 3 * time.Minute
 )
 
 type serviceConsumerFactory func(uint32, string, string) (services.Consumer, error)
@@ -54,6 +62,10 @@ type consumer struct {
 
 	idx    int
 	maxIdx int
+
+	processorDoneCh chan struct{}
+	queueCnt        int64
+	txChannel       chan *TransactionWorkPacket
 }
 
 // NewConsumerFactory returns a processorFactory for the given service consumer
@@ -71,6 +83,8 @@ func NewConsumerFactory(factory serviceConsumerFactory, eventType EventType) Pro
 			chainID:   chainID,
 			conns:     conns,
 			sc:        sc,
+
+			processorDoneCh: make(chan struct{}),
 		}
 
 		switch eventType {
@@ -131,6 +145,15 @@ func NewConsumerFactory(factory serviceConsumerFactory, eventType EventType) Pro
 			}
 		}
 
+		c.txChannel = make(chan *TransactionWorkPacket, defaultTxChannelSize)
+		for ipos := 0; ipos <= c.maxIdx; ipos++ {
+			conns, err := c.sc.DatabaseOnly()
+			if err != nil {
+				return nil, err
+			}
+			go c.transactionProcessor(conns, c.txChannel)
+		}
+
 		return c, nil
 	}
 }
@@ -146,6 +169,7 @@ func (c *consumer) Close() error {
 	if c.reader != nil {
 		errs.Add(c.reader.Close())
 	}
+	close(c.processorDoneCh)
 	if c.conns != nil {
 		errs.Add(c.conns.Close())
 	}
@@ -186,11 +210,49 @@ func (c *consumer) ProcessNextMessage() error {
 	}
 
 	if c.sc.IsDBPoll {
-		job := c.conns.QuietStream().NewJob("query-txpoll")
-		sess := c.conns.DB().NewSessionForEventReceiver(job)
+		sess := c.conns.DB().NewSessionForEventReceiver(c.conns.QuietStream().NewJob("query-txpoll"))
+		if true {
+			var err error
+			var rowdata []*services.TxPool
+			rowdata, err = fetchPollForTopic(sess, c.topicName, nil, c.maxIdx)
+
+			if err != nil {
+				return err
+			}
+
+			if len(rowdata) == 0 {
+				time.Sleep(pollSleep)
+				return nil
+			}
+
+			errs := &avlancheGoUtils.AtomicInterface{}
+
+			for _, row := range rowdata {
+				msg := &Message{
+					id:         row.MsgKey,
+					chainID:    c.chainID,
+					body:       row.Serialization,
+					timestamp:  row.CreatedAt.UTC().Unix(),
+					nanosecond: int64(row.CreatedAt.UTC().Nanosecond()),
+				}
+				atomic.AddInt64(&c.queueCnt, 1)
+				c.txChannel <- &TransactionWorkPacket{msg: msg, row: row, errs: errs}
+			}
+
+			for {
+				switch {
+				case errs.GetValue() != nil:
+					return errs.GetValue().(error)
+				case atomic.LoadInt64(&c.queueCnt) > 0:
+					time.Sleep(time.Millisecond)
+				default:
+					break
+				}
+			}
+		}
 
 		updateStatus := func(txPoll *services.TxPool) error {
-			ctx, cancelFn := context.WithTimeout(context.Background(), cfg.DefaultConsumeProcessWriteTimeout)
+			ctx, cancelFn := context.WithTimeout(context.Background(), DefaultConsumeProcessWriteTimeout)
 			defer cancelFn()
 			return c.sc.Persist.UpdateTxPoolStatus(ctx, sess, txPoll)
 		}
@@ -247,7 +309,7 @@ func (c *consumer) ProcessNextMessage() error {
 }
 
 func (c *consumer) persistConsume(msg *Message) error {
-	ctx, cancelFn := context.WithTimeout(context.Background(), cfg.DefaultConsumeProcessWriteTimeout)
+	ctx, cancelFn := context.WithTimeout(context.Background(), DefaultConsumeProcessWriteTimeout)
 	defer cancelFn()
 	switch c.eventType {
 	case EventTypeDecisions:
@@ -306,4 +368,78 @@ func (c *consumer) getNextMessage(ctx context.Context) (*Message, error) {
 	}
 
 	return m, nil
+}
+
+type TransactionWorkPacket struct {
+	msg  *Message
+	row  *services.TxPool
+	errs *avlancheGoUtils.AtomicInterface
+}
+
+func (c *consumer) transactionProcessor(conns *services.Connections, que <-chan *TransactionWorkPacket) {
+	defer func() {
+		_ = conns.Close()
+	}()
+
+	for {
+		select {
+		case w := <-que:
+			err := c.doUpdates(w.msg, w.row)
+			if err != nil {
+				w.errs.SetValue(err)
+				return
+			}
+			atomic.AddInt64(&c.queueCnt, -1)
+		case <-c.processorDoneCh:
+			return
+		}
+	}
+}
+
+func (c *consumer) doUpdates(msgval *Message, row *services.TxPool) error {
+	wm := func(msg *Message) error {
+		var err error
+		collectors := metrics.NewCollectors(
+			metrics.NewCounterIncCollect(c.metricProcessedCountKey),
+			metrics.NewCounterObserveMillisCollect(c.metricProcessMillisCounterKey),
+			metrics.NewCounterIncCollect(services.MetricConsumeProcessedCountKey),
+			metrics.NewCounterObserveMillisCollect(services.MetricConsumeProcessMillisCounterKey),
+		)
+		defer func() {
+			err := collectors.Collect()
+			if err != nil {
+				c.sc.Log.Error("collectors.Collect: %s", err)
+			}
+		}()
+
+		for {
+			err = c.persistConsume(msg)
+			if !db.ErrIsLockError(err) {
+				break
+			}
+		}
+		if err != nil {
+			collectors.Error()
+			c.sc.Log.Error("consumer.Consume: %s", err)
+			return err
+		}
+
+		c.sc.BalanceAccumulatorManager.Run(c.sc)
+		return err
+	}
+
+	updateStatus := func(txPoll *services.TxPool) error {
+		sess := c.conns.DB().NewSessionForEventReceiver(c.conns.QuietStream().NewJob("consumer-work"))
+		ctx, cancelFn := context.WithTimeout(context.Background(), DefaultConsumeProcessWriteTimeout)
+		defer cancelFn()
+		return c.sc.Persist.UpdateTxPoolStatus(ctx, sess, txPoll)
+	}
+
+	err := wm(msgval)
+	if err != nil {
+		return err
+	}
+
+	row.Processed = 1
+	return updateStatus(row)
 }

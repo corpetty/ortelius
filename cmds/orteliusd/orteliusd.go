@@ -393,28 +393,24 @@ func runStreamProcessorManagers(
 		wg := &sync.WaitGroup{}
 
 		for _, factory := range factories {
-			for instpos := 0; instpos < factory.Instances; instpos++ {
-				wg.Add(1)
-				go func(factory stream.ProcessorFactory, idx int, maxidx int) {
-					defer wg.Done()
+			wg.Add(1)
+			go func(factory stream.ProcessorFactory, idx int, maxidx int) {
+				defer wg.Done()
 
-					// Create and start processor manager
-					pm := stream.NewProcessorManager(sc, *config, factory, idx, maxidx)
-					runListenCloser(pm)
-				}(factory.Factory, instpos, factory.Instances)
-			}
+				// Create and start processor manager
+				pm := stream.NewProcessorManager(sc, *config, factory, idx, maxidx)
+				runListenCloser(pm)
+			}(factory.Factory, 0, factory.Instances)
 		}
 
 		for _, listenCloseFactory := range listenCloseFactories {
-			for instpos := 0; instpos < listenCloseFactory.Instances; instpos++ {
-				wg.Add(1)
-				go func(listenCloserFactory utils.ListenCloserFactory, idx int, maxidx int) {
-					defer wg.Done()
+			wg.Add(1)
+			go func(listenCloserFactory utils.ListenCloserFactory, idx int, maxidx int) {
+				defer wg.Done()
 
-					lc := listenCloserFactory(sc, *config, idx, maxidx)
-					runListenCloser(lc)
-				}(listenCloseFactory.Factory, instpos, listenCloseFactory.Instances)
-			}
+				lc := listenCloserFactory(sc, *config, idx, maxidx)
+				runListenCloser(lc)
+			}(listenCloseFactory.Factory, 0, listenCloseFactory.Instances)
 		}
 
 		wg.Wait()

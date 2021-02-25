@@ -4,13 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ava-labs/ortelius/cfg"
 	"github.com/ava-labs/ortelius/services"
 	"github.com/gocraft/dbr/v2"
 )
 
 func fetchPollForTopic(sess *dbr.Session, topicName string, part *int, maxPart int) ([]*services.TxPool, error) {
-	ctx, cancelFn := context.WithTimeout(context.Background(), cfg.DefaultConsumeProcessWriteTimeout)
+	ctx, cancelFn := context.WithTimeout(context.Background(), DefaultConsumeProcessWriteTimeout)
 	defer cancelFn()
 
 	var rowdata []*services.TxPool

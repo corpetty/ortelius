@@ -8,7 +8,10 @@ import (
 	"fmt"
 	"io"
 	"sync"
+	"sync/atomic"
 	"time"
+
+	avlancheGoUtils "github.com/ava-labs/avalanchego/utils"
 
 	"github.com/ava-labs/ortelius/services/db"
 
@@ -54,6 +57,10 @@ type ConsumerCChain struct {
 
 	idx    int
 	maxIdx int
+
+	processorDoneCh chan struct{}
+	queueCnt        int64
+	txChannel       chan *TransactionCWorkPacket
 }
 
 func NewConsumerCChain() utils.ListenCloserFactory {
@@ -95,11 +102,44 @@ func (c *ConsumerCChain) ID() string {
 
 func (c *ConsumerCChain) ProcessNextMessage() error {
 	if c.sc.IsDBPoll {
-		job := c.conns.QuietStream().NewJob("query-txpoll")
-		sess := c.conns.DB().NewSessionForEventReceiver(job)
+		sess := c.conns.DB().NewSessionForEventReceiver(c.conns.QuietStream().NewJob("query-txpoll"))
+		if true {
+			rowdata, err := fetchPollForTopic(sess, c.topicName, &c.idx, c.maxIdx)
+			if err != nil {
+				return err
+			}
+			if len(rowdata) == 0 {
+				time.Sleep(pollSleep)
+				return nil
+			}
+
+			errs := &avlancheGoUtils.AtomicInterface{}
+
+			for _, row := range rowdata {
+				msg := &Message{
+					id:         row.MsgKey,
+					chainID:    c.conf.CchainID,
+					body:       row.Serialization,
+					timestamp:  row.CreatedAt.UTC().Unix(),
+					nanosecond: int64(row.CreatedAt.UTC().Nanosecond()),
+				}
+				atomic.AddInt64(&c.queueCnt, 1)
+				c.txChannel <- &TransactionCWorkPacket{msg: msg, row: row, errs: errs}
+			}
+			for {
+				switch {
+				case errs.GetValue() != nil:
+					return errs.GetValue().(error)
+				case atomic.LoadInt64(&c.queueCnt) > 0:
+					time.Sleep(time.Millisecond)
+				default:
+					break
+				}
+			}
+		}
 
 		updateStatus := func(txPoll *services.TxPool) error {
-			ctx, cancelFn := context.WithTimeout(context.Background(), cfg.DefaultConsumeProcessWriteTimeout)
+			ctx, cancelFn := context.WithTimeout(context.Background(), DefaultConsumeProcessWriteTimeout)
 			defer cancelFn()
 			return c.sc.Persist.UpdateTxPoolStatus(ctx, sess, txPoll)
 		}
@@ -189,7 +229,7 @@ func (c *ConsumerCChain) Consume(msg services.Consumable) error {
 }
 
 func (c *ConsumerCChain) persistConsume(msg services.Consumable, block *cblock.Block) error {
-	ctx, cancelFn := context.WithTimeout(context.Background(), cfg.DefaultConsumeProcessWriteTimeout)
+	ctx, cancelFn := context.WithTimeout(context.Background(), DefaultConsumeProcessWriteTimeout)
 	defer cancelFn()
 	return c.consumer.Consume(ctx, c.conns, msg, block, c.sc.Persist)
 }
@@ -294,6 +334,8 @@ func (c *ConsumerCChain) isStopping() bool {
 }
 
 func (c *ConsumerCChain) init() error {
+	c.processorDoneCh = make(chan struct{})
+
 	conns, err := c.sc.DatabaseOnly()
 	if err != nil {
 		return err
@@ -308,6 +350,15 @@ func (c *ConsumerCChain) init() error {
 
 	c.consumer = consumer
 
+	c.txChannel = make(chan *TransactionCWorkPacket, defaultTxChannelSize)
+	for ipos := 0; ipos <= c.maxIdx; ipos++ {
+		conns, err := c.sc.DatabaseOnly()
+		if err != nil {
+			return err
+		}
+		go c.transactionCProcessor(conns, c.txChannel)
+	}
+
 	return nil
 }
 
@@ -317,6 +368,7 @@ func (c *ConsumerCChain) processorClose() error {
 	if c.reader != nil {
 		errs.Add(c.reader.Close())
 	}
+	close(c.processorDoneCh)
 	if c.conns != nil {
 		errs.Add(c.conns.Close())
 	}
@@ -430,4 +482,47 @@ func (c *ConsumerCChain) runProcessor() error {
 	}
 
 	return nil
+}
+
+type TransactionCWorkPacket struct {
+	msg  *Message
+	row  *services.TxPool
+	errs *avlancheGoUtils.AtomicInterface
+}
+
+func (c *ConsumerCChain) transactionCProcessor(conns *services.Connections, que <-chan *TransactionCWorkPacket) {
+	defer func() {
+		_ = conns.Close()
+	}()
+
+	for {
+		select {
+		case w := <-que:
+			err := c.doUpdates(w.msg, w.row)
+			if err != nil {
+				w.errs.SetValue(err)
+				return
+			}
+			atomic.AddInt64(&c.queueCnt, -1)
+		case <-c.processorDoneCh:
+			return
+		}
+	}
+}
+
+func (c *ConsumerCChain) doUpdates(msgval *Message, row *services.TxPool) error {
+	updateStatus := func(txPoll *services.TxPool) error {
+		sess := c.conns.DB().NewSessionForEventReceiver(c.conns.QuietStream().NewJob("cconsumer-work"))
+
+		ctx, cancelFn := context.WithTimeout(context.Background(), DefaultConsumeProcessWriteTimeout)
+		defer cancelFn()
+		return c.sc.Persist.UpdateTxPoolStatus(ctx, sess, txPoll)
+	}
+
+	err := c.Consume(msgval)
+	if err != nil {
+		return err
+	}
+	row.Processed = 1
+	return updateStatus(row)
 }

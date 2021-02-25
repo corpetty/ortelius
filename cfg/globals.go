@@ -8,9 +8,6 @@ const (
 	HTTPWriteTimeout = 30 * time.Second
 	CacheTimeout     = 3 * time.Second
 
-	// DefaultConsumeProcessWriteTimeout consume context
-	DefaultConsumeProcessWriteTimeout = 3 * time.Minute
-
 	RequestGetMaxSize = int64(10 * 1024 * 1024)
 )
 
