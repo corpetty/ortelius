@@ -22,7 +22,7 @@ type ErrorResponse struct {
 
 // WriteJSON writes the given bytes to the http response as JSON
 func WriteJSON(w http.ResponseWriter, msg []byte) {
-	w.Header().Add("Cache-Control", "max-age=5")
+	w.Header().Add("Cache-Control", "public, max-age=5")
 	w.WriteHeader(200)
 	_, _ = w.Write(msg)
 }
