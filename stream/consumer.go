@@ -29,8 +29,8 @@ const (
 	ConsumerEventTypeDefault = EventTypeDecisions
 	ConsumerMaxBytesDefault  = 10e8
 
-	pollLimit = 5000
-	pollSleep = 250 * time.Millisecond
+	pollLimit = 500
+	pollSleep = 500 * time.Millisecond
 
 	defaultTxChannelSize = 1024
 
