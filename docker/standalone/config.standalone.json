@@ -1,5 +1,5 @@
 {
-  "networkID": "statalanche",
+  "networkID": 115110116,
   "logDirectory": "/var/log/ortelius",
   "listenAddr": ":8080",
   "features": [
