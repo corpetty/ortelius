@@ -1,5 +1,5 @@
 {
-  "networkID": 5,
+  "networkID": "statalanche",
   "logDirectory": "/var/log/ortelius",
   "listenAddr": ":8080",
   "features": [
@@ -11,8 +11,8 @@
       "alias": "p",
       "vmType": "pvm"
     },
-    "2JVSBoinj9C2J33VntvzYtVJNZdN2NKiwwKjcumHUWEb5DbBrm": {
-      "id": "2JVSBoinj9C2J33VntvzYtVJNZdN2NKiwwKjcumHUWEb5DbBrm",
+    "2dBUP2QmJSbfiS7Bp37FEg541uoKqGmPmTVS1minxyD2oH2pmT": {
+      "id": "2dBUP2QmJSbfiS7Bp37FEg541uoKqGmPmTVS1minxyD2oH2pmT",
       "alias": "x",
       "vmType": "avm"
     }
@@ -23,10 +23,10 @@
         "kafka:9092"
       ]
     },
-    "cchainId": "yH8D7ThNJkxmtkuv2jgBa4P1Rn3Qpr4pPr7QYNfcdoS6k6HWp",
+    "cchainId": "oRs1d9D4vdnrtLn52MCph3S7T81mM5suGng6HED5URfJFN66U",
     "producer": {
       "ipcRoot": "/tmp",
-      "cchainRpc": "http://avalanche:9650/ext/bc/C/rpc"
+      "cchainRpc": "http://avalanche:9655/ext/bc/C/rpc"
     },
     "consumer": {
       "groupName": "indexer"
