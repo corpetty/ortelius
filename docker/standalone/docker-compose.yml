@@ -8,6 +8,8 @@ networks:
       name: ortelius_services
 services:
   avalanche:
+    networks:
+      - services
     env_file:
       - standalone.env
     image: "arthurk/avalanchego:12a3008f"
