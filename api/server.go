@@ -8,13 +8,13 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/ava-labs/ortelius/stream/consumers"
+	"github.com/corpetty/ortelius/stream/consumers"
 
-	"github.com/ava-labs/ortelius/services"
+	"github.com/corpetty/ortelius/services"
 
-	"github.com/ava-labs/ortelius/cfg"
-	"github.com/ava-labs/ortelius/services/indexes/avax"
-	"github.com/ava-labs/ortelius/services/indexes/models"
+	"github.com/corpetty/ortelius/cfg"
+	"github.com/corpetty/ortelius/services/indexes/avax"
+	"github.com/corpetty/ortelius/services/indexes/models"
 	"github.com/gocraft/web"
 )
 

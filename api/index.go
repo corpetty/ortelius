@@ -6,8 +6,8 @@ package api
 import (
 	"encoding/json"
 
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/ortelius/services/indexes/models"
+	"github.com/corpetty/avalanchego/ids"
+	"github.com/corpetty/ortelius/services/indexes/models"
 )
 
 const (

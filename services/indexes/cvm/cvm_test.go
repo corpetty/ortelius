@@ -8,19 +8,19 @@ import (
 	"testing"
 	"time"
 
-	cblock "github.com/ava-labs/ortelius/models"
+	cblock "github.com/corpetty/ortelius/models"
 
-	avalancheGoAvax "github.com/ava-labs/avalanchego/vms/components/avax"
-	"github.com/ava-labs/avalanchego/vms/secp256k1fx"
+	avalancheGoAvax "github.com/corpetty/avalanchego/vms/components/avax"
+	"github.com/corpetty/avalanchego/vms/secp256k1fx"
 
-	"github.com/ava-labs/coreth/core/types"
-	"github.com/ava-labs/coreth/plugin/evm"
+	"github.com/corpetty/coreth/core/types"
+	"github.com/corpetty/coreth/plugin/evm"
 
 	"github.com/alicebob/miniredis"
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/utils/logging"
-	"github.com/ava-labs/ortelius/cfg"
-	"github.com/ava-labs/ortelius/services"
+	"github.com/corpetty/avalanchego/ids"
+	"github.com/corpetty/avalanchego/utils/logging"
+	"github.com/corpetty/ortelius/cfg"
+	"github.com/corpetty/ortelius/services"
 )
 
 var (

@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/utils/hashing"
+	"github.com/corpetty/avalanchego/ids"
+	"github.com/corpetty/avalanchego/utils/hashing"
 
-	"github.com/ava-labs/ortelius/services/indexes/models"
+	"github.com/corpetty/ortelius/services/indexes/models"
 
-	"github.com/ava-labs/ortelius/services/db"
+	"github.com/corpetty/ortelius/services/db"
 	"github.com/gocraft/dbr/v2"
 )
 

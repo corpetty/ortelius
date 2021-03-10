@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	cblock "github.com/ava-labs/ortelius/models"
+	cblock "github.com/corpetty/ortelius/models"
 
 	kafkaMessage "github.com/segmentio/kafka-go"
 

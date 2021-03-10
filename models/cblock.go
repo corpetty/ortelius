@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ava-labs/coreth/core/types"
+	"github.com/corpetty/coreth/core/types"
 )
 
 type Block struct {

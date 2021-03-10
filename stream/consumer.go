@@ -8,16 +8,16 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ava-labs/ortelius/services/db"
+	"github.com/corpetty/ortelius/services/db"
 
-	"github.com/ava-labs/ortelius/services/metrics"
+	"github.com/corpetty/ortelius/services/metrics"
 
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/utils/wrappers"
+	"github.com/corpetty/avalanchego/ids"
+	"github.com/corpetty/avalanchego/utils/wrappers"
 	"github.com/segmentio/kafka-go"
 
-	"github.com/ava-labs/ortelius/cfg"
-	"github.com/ava-labs/ortelius/services"
+	"github.com/corpetty/ortelius/cfg"
+	"github.com/corpetty/ortelius/services"
 )
 
 const (

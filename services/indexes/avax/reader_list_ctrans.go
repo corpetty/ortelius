@@ -6,12 +6,12 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/ava-labs/coreth/core/types"
-	"github.com/ava-labs/ortelius/cfg"
-	cblock "github.com/ava-labs/ortelius/models"
-	"github.com/ava-labs/ortelius/services"
-	"github.com/ava-labs/ortelius/services/indexes/models"
-	"github.com/ava-labs/ortelius/services/indexes/params"
+	"github.com/corpetty/coreth/core/types"
+	"github.com/corpetty/ortelius/cfg"
+	cblock "github.com/corpetty/ortelius/models"
+	"github.com/corpetty/ortelius/services"
+	"github.com/corpetty/ortelius/services/indexes/models"
+	"github.com/corpetty/ortelius/services/indexes/params"
 	"github.com/gocraft/dbr/v2"
 )
 

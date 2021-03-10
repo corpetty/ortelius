@@ -10,32 +10,32 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/ava-labs/avalanchego/snow/engine/avalanche/vertex"
-	"github.com/ava-labs/avalanchego/utils/hashing"
+	"github.com/corpetty/avalanchego/snow/engine/avalanche/vertex"
+	"github.com/corpetty/avalanchego/utils/hashing"
 
-	avalancheGoAvax "github.com/ava-labs/avalanchego/vms/components/avax"
-	"github.com/ava-labs/avalanchego/vms/secp256k1fx"
+	avalancheGoAvax "github.com/corpetty/avalanchego/vms/components/avax"
+	"github.com/corpetty/avalanchego/vms/secp256k1fx"
 
 	"github.com/gocraft/health"
 
-	"github.com/ava-labs/avalanchego/database"
+	"github.com/corpetty/avalanchego/database"
 
-	"github.com/ava-labs/avalanchego/snow"
-	"github.com/ava-labs/ortelius/cfg"
+	"github.com/corpetty/avalanchego/snow"
+	"github.com/corpetty/ortelius/cfg"
 
-	"github.com/ava-labs/avalanchego/ids"
+	"github.com/corpetty/avalanchego/ids"
 
-	"github.com/ava-labs/avalanchego/codec"
-	"github.com/ava-labs/avalanchego/genesis"
-	"github.com/ava-labs/avalanchego/vms/avm"
-	"github.com/ava-labs/avalanchego/vms/components/verify"
-	"github.com/ava-labs/avalanchego/vms/platformvm"
+	"github.com/corpetty/avalanchego/codec"
+	"github.com/corpetty/avalanchego/genesis"
+	"github.com/corpetty/avalanchego/vms/avm"
+	"github.com/corpetty/avalanchego/vms/components/verify"
+	"github.com/corpetty/avalanchego/vms/platformvm"
 	"github.com/gocraft/dbr/v2"
 	"github.com/palantir/stacktrace"
 
-	"github.com/ava-labs/ortelius/services"
-	"github.com/ava-labs/ortelius/services/indexes/avax"
-	"github.com/ava-labs/ortelius/services/indexes/models"
+	"github.com/corpetty/ortelius/services"
+	"github.com/corpetty/ortelius/services/indexes/avax"
+	"github.com/corpetty/ortelius/services/indexes/models"
 )
 
 var (

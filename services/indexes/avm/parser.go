@@ -4,18 +4,18 @@
 package avm
 
 import (
-	"github.com/ava-labs/avalanchego/codec"
-	"github.com/ava-labs/avalanchego/database"
-	"github.com/ava-labs/avalanchego/genesis"
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/snow"
-	"github.com/ava-labs/avalanchego/snow/engine/common"
-	"github.com/ava-labs/avalanchego/utils/logging"
-	"github.com/ava-labs/avalanchego/vms/avm"
-	"github.com/ava-labs/avalanchego/vms/nftfx"
-	"github.com/ava-labs/avalanchego/vms/platformvm"
-	"github.com/ava-labs/avalanchego/vms/secp256k1fx"
-	"github.com/ava-labs/ortelius/utils"
+	"github.com/corpetty/avalanchego/codec"
+	"github.com/corpetty/avalanchego/database"
+	"github.com/corpetty/avalanchego/genesis"
+	"github.com/corpetty/avalanchego/ids"
+	"github.com/corpetty/avalanchego/snow"
+	"github.com/corpetty/avalanchego/snow/engine/common"
+	"github.com/corpetty/avalanchego/utils/logging"
+	"github.com/corpetty/avalanchego/vms/avm"
+	"github.com/corpetty/avalanchego/vms/nftfx"
+	"github.com/corpetty/avalanchego/vms/platformvm"
+	"github.com/corpetty/avalanchego/vms/secp256k1fx"
+	"github.com/corpetty/ortelius/utils"
 	"github.com/prometheus/client_golang/prometheus"
 )
 

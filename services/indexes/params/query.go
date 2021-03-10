@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/utils/formatting"
+	"github.com/corpetty/avalanchego/ids"
+	"github.com/corpetty/avalanchego/utils/formatting"
 )
 
 func GetQueryInt(q url.Values, key string, defaultVal int) (val int, err error) {

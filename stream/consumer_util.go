@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ava-labs/ortelius/cfg"
-	"github.com/ava-labs/ortelius/services"
+	"github.com/corpetty/ortelius/cfg"
+	"github.com/corpetty/ortelius/services"
 	"github.com/gocraft/dbr/v2"
 )
 

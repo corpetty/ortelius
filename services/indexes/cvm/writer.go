@@ -9,21 +9,21 @@ import (
 	"errors"
 	"time"
 
-	cblock "github.com/ava-labs/ortelius/models"
+	cblock "github.com/corpetty/ortelius/models"
 
-	"github.com/ava-labs/ortelius/services/indexes/models"
+	"github.com/corpetty/ortelius/services/indexes/models"
 
-	"github.com/ava-labs/avalanchego/vms/components/verify"
+	"github.com/corpetty/avalanchego/vms/components/verify"
 	"github.com/ethereum/go-ethereum/common"
 
-	"github.com/ava-labs/avalanchego/codec"
-	"github.com/ava-labs/avalanchego/genesis"
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/utils/hashing"
-	"github.com/ava-labs/coreth/plugin/evm"
-	"github.com/ava-labs/ortelius/cfg"
-	"github.com/ava-labs/ortelius/services"
-	avaxIndexer "github.com/ava-labs/ortelius/services/indexes/avax"
+	"github.com/corpetty/avalanchego/codec"
+	"github.com/corpetty/avalanchego/genesis"
+	"github.com/corpetty/avalanchego/ids"
+	"github.com/corpetty/avalanchego/utils/hashing"
+	"github.com/corpetty/coreth/plugin/evm"
+	"github.com/corpetty/ortelius/cfg"
+	"github.com/corpetty/ortelius/services"
+	avaxIndexer "github.com/corpetty/ortelius/services/indexes/avax"
 )
 
 var (

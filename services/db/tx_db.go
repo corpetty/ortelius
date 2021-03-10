@@ -8,7 +8,7 @@ import (
 
 	"github.com/DATA-DOG/go-txdb"
 
-	"github.com/ava-labs/ortelius/cfg"
+	"github.com/corpetty/ortelius/cfg"
 )
 
 var registerTxDBOnce = sync.Once{}

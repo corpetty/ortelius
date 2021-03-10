@@ -7,11 +7,11 @@ import (
 	"context"
 	"time"
 
-	"github.com/ava-labs/ortelius/cfg"
+	"github.com/corpetty/ortelius/cfg"
 
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/ortelius/services/indexes/models"
-	"github.com/ava-labs/ortelius/services/indexes/params"
+	"github.com/corpetty/avalanchego/ids"
+	"github.com/corpetty/ortelius/services/indexes/models"
+	"github.com/corpetty/ortelius/services/indexes/params"
 	"github.com/gocraft/dbr/v2"
 )
 

@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ava-labs/ortelius/services/cache"
+	"github.com/corpetty/ortelius/services/cache"
 )
 
 // CacheableFn is a function whose output can safely be cached

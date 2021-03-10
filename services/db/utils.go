@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 
-	"github.com/ava-labs/ortelius/cfg"
+	"github.com/corpetty/ortelius/cfg"
 )
 
 const (

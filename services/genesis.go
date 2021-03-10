@@ -1,10 +1,10 @@
 package services
 
 import (
-	"github.com/ava-labs/avalanchego/genesis"
-	"github.com/ava-labs/avalanchego/ids"
-	avmVM "github.com/ava-labs/avalanchego/vms/avm"
-	"github.com/ava-labs/avalanchego/vms/platformvm"
+	"github.com/corpetty/avalanchego/genesis"
+	"github.com/corpetty/avalanchego/ids"
+	avmVM "github.com/corpetty/avalanchego/vms/avm"
+	"github.com/corpetty/avalanchego/vms/platformvm"
 )
 
 type GenesisContainer struct {
