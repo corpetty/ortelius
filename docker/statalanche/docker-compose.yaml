@@ -1,0 +1,53 @@
+version: '3'
+volumes:
+  avalanche-data:
+  avalanche-ipcs:
+networks:
+  services:
+    external:
+      name: ortelius_services
+services:
+  avalanche:
+    networks:
+      - services
+    env_file:
+      - statalanche.env
+    image: "arthurk/avalanchego:6ef8b72e"
+    command: /bin/sh -cx "exec ./build/avalanchego
+      --network-id=$${NETWORKID}
+      --db-dir=/var/lib/avalanche
+      --log-level=info
+      --http-host=0.0.0.0
+      --bootstrap-ids='NodeID-E349V27puxyemQTc6QDDGaLD1kEF1GJfa,NodeID-Pvfe5vYMUMecgXWcbtmSjqVxcisQJuHty,NodeID-PCe2PQb5wwXT7JUsFQjrqb8bVhRinnKoW'
+      --bootstrap-ips='188.166.203.71:9653,161.35.247.229:9653,161.35.247.230:9653'
+      --ipcs-chain-ids=$${P_CHAINID},$${X_CHAINID}
+      --coreth-config='{\"rpc-gas-cap\":2500000000,\"rpc-tx-fee-cap\":100,\"eth-api-enabled\":true,\"debug-api-enabled\":true,\"tx-pool-api-enabled\":true}'
+      "
+    ports:
+      - "9655:9655"
+    volumes:
+      - avalanche-data:/var/lib/avalanche
+      - avalanche-ipcs:/tmp
+    depends_on:
+      - producer
+    restart: always
+  producer: &ortelius-app
+    image: "arthurk/ortelius:a30b9ec"
+    command: ["stream", "producer", "-c", "/opt/config.json"]
+    networks:
+      - services
+    external_links:
+      - mysql
+      - redis
+    volumes:
+      - avalanche-ipcs:/tmp
+      - ./config.statalanche.json:/opt/config.json
+    restart: on-failure
+  indexer:
+    <<: *ortelius-app
+    command: ["stream", "indexer", "-c", "/opt/config.json"]
+  api:
+    <<: *ortelius-app
+    command: ["api", "-c", "/opt/config.json"]
+    ports:
+      - 8080:8080

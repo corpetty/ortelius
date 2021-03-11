@@ -1,6 +1,6 @@
 # Create base builder image
 FROM golang:1.15.5-alpine
-WORKDIR /go/src/github.com/ava-labs/ortelius
+WORKDIR /go/src/github.com/corpetty/ortelius
 RUN apk add git alpine-sdk linux-headers
 
 # Build app
@@ -17,6 +17,6 @@ WORKDIR /opt
 
 # Copy in and wire up build artifacts
 COPY --from=0 /opt/orteliusd /opt/orteliusd
-COPY --from=0 /go/src/github.com/ava-labs/ortelius/docker/config.json /opt/config.json
-COPY --from=0 /go/src/github.com/ava-labs/ortelius/services/db/migrations /opt/migrations
+COPY --from=0 /go/src/github.com/corpetty/ortelius/docker/config.json /opt/config.json
+COPY --from=0 /go/src/github.com/corpetty/ortelius/services/db/migrations /opt/migrations
 ENTRYPOINT ["/opt/orteliusd"]

@@ -96,7 +96,7 @@ db_migrate_down: ## Migrate the database down
 
 GIT_HASH = $(shell git rev-parse --short HEAD)
 
-DOCKER_REPO ?= avaplatform/ortelius
+DOCKER_REPO ?= arthurk/ortelius
 DOCKER_TAG ?= $(GIT_HASH)
 DOCKER_IMAGE_NAME ?= ${DOCKER_REPO}:${DOCKER_TAG}
 
