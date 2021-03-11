@@ -11,16 +11,16 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ava-labs/ortelius/utils"
+	"github.com/corpetty/ortelius/utils"
 
-	avlancheGoUtils "github.com/ava-labs/avalanchego/utils"
+	avlancheGoUtils "github.com/corpetty/avalanchego/utils"
 
-	"github.com/ava-labs/ortelius/cfg"
-	"github.com/ava-labs/ortelius/services"
-	"github.com/ava-labs/ortelius/services/indexes/avm"
-	"github.com/ava-labs/ortelius/services/indexes/cvm"
-	"github.com/ava-labs/ortelius/services/indexes/pvm"
-	"github.com/ava-labs/ortelius/stream"
+	"github.com/corpetty/ortelius/cfg"
+	"github.com/corpetty/ortelius/services"
+	"github.com/corpetty/ortelius/services/indexes/avm"
+	"github.com/corpetty/ortelius/services/indexes/cvm"
+	"github.com/corpetty/ortelius/services/indexes/pvm"
+	"github.com/corpetty/ortelius/stream"
 )
 
 const (

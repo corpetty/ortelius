@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ava-labs/ortelius/services/indexes/models"
+	"github.com/corpetty/ortelius/services/indexes/models"
 
 	"github.com/gocraft/dbr/v2"
 	"github.com/gocraft/health"

@@ -6,7 +6,7 @@ package models
 import (
 	"time"
 
-	"github.com/ava-labs/avalanchego/ids"
+	"github.com/corpetty/avalanchego/ids"
 )
 
 type ListMetadata struct {

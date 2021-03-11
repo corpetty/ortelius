@@ -10,23 +10,23 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ava-labs/avalanchego/utils/crypto"
-	"github.com/ava-labs/avalanchego/vms/components/verify"
+	"github.com/corpetty/avalanchego/utils/crypto"
+	"github.com/corpetty/avalanchego/vms/components/verify"
 
-	"github.com/ava-labs/avalanchego/vms/secp256k1fx"
+	"github.com/corpetty/avalanchego/vms/secp256k1fx"
 
-	"github.com/ava-labs/avalanchego/vms/avm"
+	"github.com/corpetty/avalanchego/vms/avm"
 
 	"github.com/alicebob/miniredis"
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/utils/logging"
-	"github.com/ava-labs/ortelius/cfg"
-	"github.com/ava-labs/ortelius/services"
-	"github.com/ava-labs/ortelius/services/indexes/avax"
-	"github.com/ava-labs/ortelius/services/indexes/models"
-	"github.com/ava-labs/ortelius/services/indexes/params"
+	"github.com/corpetty/avalanchego/ids"
+	"github.com/corpetty/avalanchego/utils/logging"
+	"github.com/corpetty/ortelius/cfg"
+	"github.com/corpetty/ortelius/services"
+	"github.com/corpetty/ortelius/services/indexes/avax"
+	"github.com/corpetty/ortelius/services/indexes/models"
+	"github.com/corpetty/ortelius/services/indexes/params"
 
-	avalancheGoAvax "github.com/ava-labs/avalanchego/vms/components/avax"
+	avalancheGoAvax "github.com/corpetty/avalanchego/vms/components/avax"
 )
 
 var (

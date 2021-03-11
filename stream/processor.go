@@ -10,9 +10,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ava-labs/ortelius/services"
+	"github.com/corpetty/ortelius/services"
 
-	"github.com/ava-labs/ortelius/cfg"
+	"github.com/corpetty/ortelius/cfg"
 )
 
 var (

@@ -6,12 +6,12 @@ package stream
 import (
 	"fmt"
 
-	"github.com/ava-labs/avalanchego/utils/wrappers"
+	"github.com/corpetty/avalanchego/utils/wrappers"
 
-	"github.com/ava-labs/avalanchego/ipcs/socket"
-	"github.com/ava-labs/ortelius/cfg"
-	"github.com/ava-labs/ortelius/services"
-	"github.com/ava-labs/ortelius/services/metrics"
+	"github.com/corpetty/avalanchego/ipcs/socket"
+	"github.com/corpetty/ortelius/cfg"
+	"github.com/corpetty/ortelius/services"
+	"github.com/corpetty/ortelius/services/metrics"
 )
 
 // producer reads from the socket and writes to the event stream

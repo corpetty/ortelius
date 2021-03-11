@@ -13,15 +13,15 @@ import (
 	"sync/atomic"
 	"time"
 
-	cblock "github.com/ava-labs/ortelius/models"
+	cblock "github.com/corpetty/ortelius/models"
 
-	"github.com/ava-labs/ortelius/utils"
+	"github.com/corpetty/ortelius/utils"
 
-	"github.com/ava-labs/avalanchego/ids"
-	avlancheGoUtils "github.com/ava-labs/avalanchego/utils"
-	"github.com/ava-labs/ortelius/cfg"
-	"github.com/ava-labs/ortelius/services"
-	"github.com/ava-labs/ortelius/stream"
+	"github.com/corpetty/avalanchego/ids"
+	avlancheGoUtils "github.com/corpetty/avalanchego/utils"
+	"github.com/corpetty/ortelius/cfg"
+	"github.com/corpetty/ortelius/services"
+	"github.com/corpetty/ortelius/stream"
 	"github.com/segmentio/kafka-go"
 )
 

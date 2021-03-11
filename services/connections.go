@@ -14,13 +14,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ava-labs/avalanchego/utils/wrappers"
+	"github.com/corpetty/avalanchego/utils/wrappers"
 	"github.com/go-redis/redis/v8"
 	"github.com/gocraft/health"
 
-	"github.com/ava-labs/ortelius/cfg"
-	"github.com/ava-labs/ortelius/services/cache"
-	"github.com/ava-labs/ortelius/services/db"
+	"github.com/corpetty/ortelius/cfg"
+	"github.com/corpetty/ortelius/services/cache"
+	"github.com/corpetty/ortelius/services/db"
 )
 
 type Connections struct {

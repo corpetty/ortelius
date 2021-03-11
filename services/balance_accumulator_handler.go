@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/ava-labs/ortelius/services/db"
+	"github.com/corpetty/ortelius/services/db"
 
 	"github.com/gocraft/dbr/v2"
 )

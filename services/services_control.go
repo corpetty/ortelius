@@ -3,10 +3,10 @@ package services
 import (
 	"time"
 
-	"github.com/ava-labs/ortelius/services/metrics"
+	"github.com/corpetty/ortelius/services/metrics"
 
-	"github.com/ava-labs/avalanchego/utils/logging"
-	"github.com/ava-labs/ortelius/cfg"
+	"github.com/corpetty/avalanchego/utils/logging"
+	"github.com/corpetty/ortelius/cfg"
 )
 
 const (

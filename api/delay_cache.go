@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/ava-labs/ortelius/cfg"
-	"github.com/ava-labs/ortelius/utils"
+	"github.com/corpetty/ortelius/cfg"
+	"github.com/corpetty/ortelius/utils"
 )
 
 type CacheJob struct {

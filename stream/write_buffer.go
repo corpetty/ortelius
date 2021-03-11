@@ -7,13 +7,13 @@ import (
 	"context"
 	"time"
 
-	"github.com/ava-labs/avalanchego/ids"
+	"github.com/corpetty/avalanchego/ids"
 
-	"github.com/ava-labs/ortelius/services"
+	"github.com/corpetty/ortelius/services"
 
-	"github.com/ava-labs/ortelius/services/metrics"
+	"github.com/corpetty/ortelius/services/metrics"
 
-	"github.com/ava-labs/avalanchego/utils/hashing"
+	"github.com/corpetty/avalanchego/utils/hashing"
 )
 
 const (

@@ -5,19 +5,19 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ava-labs/avalanchego/vms/components/core"
+	"github.com/corpetty/avalanchego/vms/components/core"
 
-	"github.com/ava-labs/ortelius/services/indexes/models"
+	"github.com/corpetty/ortelius/services/indexes/models"
 
-	"github.com/ava-labs/avalanchego/vms/platformvm"
+	"github.com/corpetty/avalanchego/vms/platformvm"
 
 	"github.com/alicebob/miniredis"
-	"github.com/ava-labs/avalanchego/ids"
-	"github.com/ava-labs/avalanchego/utils/logging"
-	"github.com/ava-labs/ortelius/cfg"
-	"github.com/ava-labs/ortelius/services"
-	"github.com/ava-labs/ortelius/services/indexes/avax"
-	"github.com/ava-labs/ortelius/services/indexes/params"
+	"github.com/corpetty/avalanchego/ids"
+	"github.com/corpetty/avalanchego/utils/logging"
+	"github.com/corpetty/ortelius/cfg"
+	"github.com/corpetty/ortelius/services"
+	"github.com/corpetty/ortelius/services/indexes/avax"
+	"github.com/corpetty/ortelius/services/indexes/params"
 )
 
 var (

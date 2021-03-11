@@ -1,6 +1,6 @@
 package utils
 
-import "github.com/ava-labs/avalanchego/database"
+import "github.com/corpetty/avalanchego/database"
 
 // NoopDatabase is a lightning fast key value store with probabilistic operations.
 type NoopDatabase struct{}

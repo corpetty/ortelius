@@ -13,25 +13,25 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ava-labs/avalanchego/ids"
-	cblock "github.com/ava-labs/ortelius/models"
+	"github.com/corpetty/avalanchego/ids"
+	cblock "github.com/corpetty/ortelius/models"
 
-	"github.com/ava-labs/avalanchego/utils/wrappers"
+	"github.com/corpetty/avalanchego/utils/wrappers"
 
-	"github.com/ava-labs/ortelius/utils"
+	"github.com/corpetty/ortelius/utils"
 
-	"github.com/ava-labs/coreth/core/types"
+	"github.com/corpetty/coreth/core/types"
 
-	"github.com/ava-labs/avalanchego/utils/hashing"
+	"github.com/corpetty/avalanchego/utils/hashing"
 
-	"github.com/ava-labs/coreth"
+	"github.com/corpetty/coreth"
 
-	"github.com/ava-labs/coreth/ethclient"
-	"github.com/ava-labs/coreth/rpc"
-	"github.com/ava-labs/ortelius/services"
+	"github.com/corpetty/coreth/ethclient"
+	"github.com/corpetty/coreth/rpc"
+	"github.com/corpetty/ortelius/services"
 
-	"github.com/ava-labs/ortelius/cfg"
-	"github.com/ava-labs/ortelius/services/metrics"
+	"github.com/corpetty/ortelius/cfg"
+	"github.com/corpetty/ortelius/services/metrics"
 )
 
 const (

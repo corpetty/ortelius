@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ava-labs/avalanchego/utils/logging"
+	"github.com/corpetty/avalanchego/utils/logging"
 )
 
 const appName = "ortelius"

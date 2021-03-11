@@ -13,7 +13,7 @@ import (
 	"github.com/gocraft/dbr/v2/dialect"
 	"github.com/gocraft/health"
 
-	"github.com/ava-labs/ortelius/cfg"
+	"github.com/corpetty/ortelius/cfg"
 )
 
 const (

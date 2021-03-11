@@ -7,12 +7,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ava-labs/ortelius/services/db"
+	"github.com/corpetty/ortelius/services/db"
 
-	"github.com/ava-labs/ortelius/services/metrics"
+	"github.com/corpetty/ortelius/services/metrics"
 
-	"github.com/ava-labs/ortelius/cfg"
-	"github.com/ava-labs/ortelius/services"
+	"github.com/corpetty/ortelius/cfg"
+	"github.com/corpetty/ortelius/services"
 )
 
 // consumer takes events from db and sends them to a service consumer

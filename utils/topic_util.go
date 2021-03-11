@@ -10,7 +10,7 @@ import (
 
 	"github.com/segmentio/kafka-go"
 
-	avlancheGoUtils "github.com/ava-labs/avalanchego/utils"
+	avlancheGoUtils "github.com/corpetty/avalanchego/utils"
 )
 
 var (

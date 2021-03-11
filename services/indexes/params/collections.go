@@ -9,12 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ava-labs/ortelius/services"
+	"github.com/corpetty/ortelius/services"
 
-	"github.com/ava-labs/avalanchego/ids"
+	"github.com/corpetty/avalanchego/ids"
 	"github.com/gocraft/dbr/v2"
 
-	"github.com/ava-labs/ortelius/services/indexes/models"
+	"github.com/corpetty/ortelius/services/indexes/models"
 )
 
 const (

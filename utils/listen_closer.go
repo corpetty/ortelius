@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"github.com/ava-labs/ortelius/cfg"
-	"github.com/ava-labs/ortelius/services"
+	"github.com/corpetty/ortelius/cfg"
+	"github.com/corpetty/ortelius/services"
 )
 
 // ListenCloser listens for messages until it's asked to close
