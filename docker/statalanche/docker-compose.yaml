@@ -12,7 +12,7 @@ services:
       - services
     env_file:
       - statalanche.env
-    image: "arthurk/avalanchego:12a3008f"
+    image: "arthurk/avalanchego:6ef8b72e"
     command: /bin/sh -cx "exec ./build/avalanchego
       --network-id=$${NETWORKID}
       --db-dir=/var/lib/avalanche
