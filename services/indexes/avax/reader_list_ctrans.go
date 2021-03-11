@@ -6,6 +6,8 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/corpetty/ortelius/utils"
+
 	"github.com/corpetty/coreth/core/types"
 	"github.com/corpetty/ortelius/cfg"
 	cblock "github.com/corpetty/ortelius/models"
@@ -29,10 +31,7 @@ func (r *Reader) ListCTransactions(ctx context.Context, p *params.ListCTransacti
 		}
 		res.GasLimit = t.Gas()
 		if t.To() != nil {
-			str := t.To().Hex()
-			if !strings.HasPrefix(str, "0x") {
-				str = "0x" + str
-			}
+			str := utils.CommonAddressHexRepair(t.To())
 			res.Recipient = &str
 		}
 		if t.Value() != nil {

@@ -5,6 +5,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -110,7 +111,10 @@ func AddV2Routes(ctx *Context, router *web.Router, path string, indexBytes []byt
 		Get("/ptxdata/:id", (*V2Context).PTxData).
 		Get("/ctxdata/:id", (*V2Context).CTxData).
 		Get("/etxdata/:id", (*V2Context).ETxData).
-		Get("/ctransactions", (*V2Context).ListCTransactions)
+		Get("/ctransactions", (*V2Context).ListCTransactions).
+		Get("/rawtransaction/:id", (*V2Context).RawTransaction).
+		Get("/cacheassetaggregates", (*V2Context).CacheAssetAggregates).
+		Get("/cacheaggregates/:id", (*V2Context).CacheAggregates)
 }
 
 //
@@ -189,7 +193,7 @@ func (c *V2Context) Aggregate(w web.ResponseWriter, r *web.Request) {
 	c.WriteCacheable(w, Cacheable{
 		Key: c.cacheKeyForParams("aggregate", p),
 		CacheableFn: func(ctx context.Context) (interface{}, error) {
-			return c.avaxReader.Aggregate(ctx, p)
+			return c.avaxReader.Aggregate(ctx, p, nil)
 		},
 	})
 }
@@ -670,5 +674,53 @@ func (c *V2Context) ETxData(w web.ResponseWriter, r *web.Request) {
 		c.WriteErr(w, 400, err)
 		return
 	}
+	WriteJSON(w, b)
+}
+
+func (c *V2Context) RawTransaction(w web.ResponseWriter, r *web.Request) {
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.RequestTimeout)
+	defer cancel()
+
+	id, err := ids.FromString(r.PathParams["id"])
+	if err != nil {
+		c.WriteErr(w, 400, err)
+		return
+	}
+
+	rawdata, err := c.avaxReader.RawTransaction(ctx, id)
+	if err != nil {
+		c.WriteErr(w, 400, err)
+		return
+	}
+
+	b, err := json.Marshal(rawdata)
+	if err != nil {
+		c.WriteErr(w, 400, err)
+		return
+	}
+
+	WriteJSON(w, b)
+}
+
+func (c *V2Context) CacheAssetAggregates(w web.ResponseWriter, r *web.Request) {
+	res := c.avaxReader.CacheAssetAggregates()
+	b, err := json.Marshal(res)
+	if err != nil {
+		c.WriteErr(w, 400, err)
+		return
+	}
+
+	WriteJSON(w, b)
+}
+
+func (c *V2Context) CacheAggregates(w web.ResponseWriter, r *web.Request) {
+	id := r.PathParams["id"]
+	res := c.avaxReader.CacheAggregates(id)
+	b, err := json.Marshal(res)
+	if err != nil {
+		c.WriteErr(w, 400, err)
+		return
+	}
+
 	WriteJSON(w, b)
 }

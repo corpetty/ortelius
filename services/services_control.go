@@ -29,8 +29,8 @@ type Control struct {
 	GenesisContainer           *GenesisContainer
 	IsAccumulateBalanceIndexer bool
 	IsAccumulateBalanceReader  bool
-	IsDBPoll                   bool
 	IsDisableBootstrap         bool
+	IsAggregateCache           bool
 }
 
 func (s *Control) Init(networkID uint32) error {
@@ -44,11 +44,11 @@ func (s *Control) Init(networkID uint32) error {
 			s.IsAccumulateBalanceReader = true
 		}
 	}
-	if _, ok := s.Features["db_poll"]; ok {
-		s.IsDBPoll = true
-	}
 	if _, ok := s.Features["disable_bootstrap"]; ok {
 		s.IsDisableBootstrap = true
+	}
+	if _, ok := s.Features["aggregate_cache"]; ok {
+		s.IsAggregateCache = true
 	}
 	var err error
 	persist := NewPersist()

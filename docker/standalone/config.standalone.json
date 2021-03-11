@@ -3,12 +3,10 @@
   "logDirectory": "/var/log/ortelius",
   "listenAddr": ":8080",
   "features": [
-    "db_poll"
   ],
   "chains": {
     "11111111111111111111111111111111LpoYY": {
       "id": "11111111111111111111111111111111LpoYY",
-      "alias": "p",
       "vmType": "pvm"
     },
     "2dBUP2QmJSbfiS7Bp37FEg541uoKqGmPmTVS1minxyD2oH2pmT": {
@@ -29,7 +27,6 @@
       "cchainRpc": "http://avalanche:9655/ext/bc/C/rpc"
     },
     "consumer": {
-      "groupName": "indexer"
     }
   },
   "services": {

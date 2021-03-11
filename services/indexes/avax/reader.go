@@ -5,6 +5,7 @@ package avax
 
 import (
 	"context"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -62,16 +63,28 @@ type Reader struct {
 	networkID       uint32
 	chainConsumers  map[string]services.Consumer
 	cChainCconsumer services.ConsumerCChain
+
+	readerAggregate ReaderAggregate
+
+	doneCh chan struct{}
 }
 
-func NewReader(networkID uint32, conns *services.Connections, chainConsumers map[string]services.Consumer, cChainCconsumer services.ConsumerCChain, sc *services.Control) *Reader {
-	return &Reader{
+func NewReader(networkID uint32, conns *services.Connections, chainConsumers map[string]services.Consumer, cChainCconsumer services.ConsumerCChain, sc *services.Control) (*Reader, error) {
+	reader := &Reader{
 		conns:           conns,
 		sc:              sc,
 		networkID:       networkID,
 		chainConsumers:  chainConsumers,
 		cChainCconsumer: cChainCconsumer,
+		doneCh:          make(chan struct{}),
 	}
+
+	err := reader.aggregateProcessor()
+	if err != nil {
+		return nil, err
+	}
+
+	return reader, nil
 }
 
 func (r *Reader) Search(ctx context.Context, p *params.SearchParams, avaxAssetID ids.ID) (*models.SearchResults, error) {
@@ -310,7 +323,7 @@ func (r *Reader) TxfeeAggregate(ctx context.Context, params *params.TxfeeAggrega
 	return aggs, nil
 }
 
-func (r *Reader) Aggregate(ctx context.Context, params *params.AggregateParams) (*models.AggregatesHistogram, error) {
+func (r *Reader) Aggregate(ctx context.Context, params *params.AggregateParams, conns *services.Connections) (*models.AggregatesHistogram, error) {
 	// Validate params and set defaults if necessary
 	if params.ListParams.StartTime.IsZero() {
 		var err error
@@ -335,10 +348,16 @@ func (r *Reader) Aggregate(ctx context.Context, params *params.AggregateParams) 
 		}
 	}
 
-	// Build the query and load the base data
-	dbRunner, err := r.conns.DB().NewSession("get_transaction_aggregates_histogram", cfg.RequestTimeout)
-	if err != nil {
-		return nil, err
+	var dbRunner *dbr.Session
+	var err error
+
+	if conns != nil {
+		dbRunner = conns.DB().NewSessionForEventReceiver(conns.Stream().NewJob("get_transaction_aggregates_histogram"))
+	} else {
+		dbRunner, err = r.conns.DB().NewSession("get_transaction_aggregates_histogram", cfg.RequestTimeout)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var builder *dbr.SelectStmt
@@ -690,6 +709,10 @@ func (r *Reader) ListAddresses(ctx context.Context, p *params.ListAddressesParam
 			OrderAsc("avm_outputs.chain_id").
 			OrderAsc("avm_output_addresses.address").
 			OrderAsc("avm_outputs.asset_id")
+
+		if len(p.ChainIDs) != 0 {
+			baseq.Where("avm_outputs.chain_id IN ?", p.ChainIDs)
+		}
 	}
 
 	builder := dbRunner.Select(
@@ -1502,12 +1525,12 @@ func (r *Reader) CTxDATA(ctx context.Context, p *params.TxDataParam) ([]byte, er
 
 	rows := []Row{}
 
-	iv, res := big.NewInt(0).SetString(p.ID, 10)
-	if iv != nil && res {
+	idInt, ok := big.NewInt(0).SetString(p.ID, 10)
+	if idInt != nil && ok {
 		_, err = dbRunner.
 			Select("serialization").
 			From("cvm_transactions").
-			Where("block="+p.ID).
+			Where("block="+idInt.String()).
 			Limit(1).
 			LoadContext(ctx, &rows)
 		if err != nil {
@@ -1558,17 +1581,19 @@ func (r *Reader) CTxDATA(ctx context.Context, p *params.TxDataParam) ([]byte, er
 	}
 	rowsData := []RowData{}
 
-	_, err = dbRunner.
-		Select(
-			"idx",
-			"serialization",
-		).
-		From("cvm_transactions_txdata").
-		Where("block="+p.ID).
-		OrderAsc("idx").
-		LoadContext(ctx, &rowsData)
-	if err != nil {
-		return nil, err
+	if idInt != nil {
+		_, err = dbRunner.
+			Select(
+				"idx",
+				"serialization",
+			).
+			From("cvm_transactions_txdata").
+			Where("block="+idInt.String()).
+			OrderAsc("idx").
+			LoadContext(ctx, &rowsData)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	block.Txs = make([]corethType.Transaction, 0, len(rowsData))
@@ -1595,13 +1620,16 @@ func (r *Reader) ETxDATA(ctx context.Context, p *params.TxDataParam) ([]byte, er
 	}
 	rows := []Row{}
 
-	_, err = dbRunner.
-		Select("serialization").
-		From("cvm_transactions").
-		Where("block="+p.ID).
-		LoadContext(ctx, &rows)
-	if err != nil {
-		return nil, err
+	idInt, ok := big.NewInt(0).SetString(p.ID, 10)
+	if idInt != nil && ok {
+		_, err = dbRunner.
+			Select("serialization").
+			From(services.TableCvmTransactions).
+			Where("block="+idInt.String()).
+			LoadContext(ctx, &rows)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if len(rows) == 0 {
@@ -1611,6 +1639,32 @@ func (r *Reader) ETxDATA(ctx context.Context, p *params.TxDataParam) ([]byte, er
 	row := rows[0]
 
 	return r.cChainCconsumer.ParseJSON(row.Serialization)
+}
+
+func (r *Reader) RawTransaction(ctx context.Context, id ids.ID) (*models.RawTx, error) {
+	dbRunner, err := r.conns.DB().NewSession("raw-transaction", cfg.RequestTimeout)
+	if err != nil {
+		return nil, err
+	}
+
+	type SerialData struct {
+		Serialization []byte
+	}
+
+	serialData := SerialData{}
+
+	err = dbRunner.
+		Select("serialization").
+		From(services.TableTxPool).
+		Where("msg_key=?", id.String()).
+		LoadOneContext(ctx, &serialData)
+	if err != nil {
+		return nil, err
+	}
+
+	rawTx := models.RawTx{Tx: "0x" + hex.EncodeToString(serialData.Serialization)}
+
+	return &rawTx, nil
 }
 
 func uint64Ptr(u64 uint64) *uint64 {

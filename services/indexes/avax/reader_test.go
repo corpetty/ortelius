@@ -191,7 +191,6 @@ func newTestIndex(t *testing.T) (*Reader, func()) {
 	conf := cfg.Services{
 		Logging: logConf,
 		DB: &cfg.DB{
-			TXDB:   true,
 			Driver: "mysql",
 			DSN:    "root:password@tcp(127.0.0.1:3306)/ortelius_test?parseTime=true",
 		},
@@ -207,7 +206,7 @@ func newTestIndex(t *testing.T) (*Reader, func()) {
 	}
 
 	cmap := make(map[string]services.Consumer)
-	reader := NewReader(5, conns, cmap, nil, sc)
+	reader, _ := NewReader(5, conns, cmap, nil, sc)
 	return reader, func() {
 		s.Close()
 		_ = conns.Close()
