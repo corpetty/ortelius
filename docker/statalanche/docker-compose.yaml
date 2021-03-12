@@ -24,7 +24,7 @@ services:
       --coreth-config='{\"rpc-gas-cap\":2500000000,\"rpc-tx-fee-cap\":100,\"eth-api-enabled\":true,\"debug-api-enabled\":true,\"tx-pool-api-enabled\":true}'
       "
     ports:
-      - "9655:9655"
+      - "9755:9655"
     volumes:
       - avalanche-data:/var/lib/avalanche
       - avalanche-ipcs:/tmp
